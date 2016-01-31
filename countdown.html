@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <title>倒计时</title>
+</head>
+<body>
+    <script src="./react-0.13.2/react.js"></script>
+    <script src="./react-0.13.2/JSXTransformer.js"></script>
+    <script type="text/jsx">
+        var style={width:'300px',margin:'0px auto','margin-top':'100px',color:'red'};
+        var Countdown = React.createClass({ 
+            timerTick: function(t) {
+                var dateTimeStr = this.state.endTime.replace(/-/g,'/'); 
+                var date =  new Date(dateTimeStr); 
+                var endTimestamp = date.getTime().toString().substr(0, 10);
+                var nowTimestamp=new Date().getTime().toString().substr(0, 10);
+                if(endTimestamp<=nowTimestamp){
+                    var t='0秒';
+                }else{
+                    var days=parseInt((endTimestamp-nowTimestamp)/86400);
+                    var hours=parseInt((endTimestamp-nowTimestamp-days*86400)/3600);
+                    var minutes=parseInt((endTimestamp-nowTimestamp-days*86400-hours*3600)/60);
+                    var seconds=endTimestamp-nowTimestamp-days*86400-hours*3600-minutes*60;
+                    var t=days+'天'+hours+'小时'+minutes+'分'+seconds+'秒';
+                }
+                this.setState({
+                    leftTime: t
+                });
+            },
+            getInitialState: function() {
+                return {
+                    endTime:'2015-10-18 00:00:00',
+                    leftTime: ''
+                }
+            },
+            componentWillMount: function() {
+                 this.timerTick();
+            },
+            componentDidMount: function() {
+                this._interval = setInterval(this.timerTick, 1000);
+            },
+            componentWillUnmount: function() {
+                clearInterval(this._interval);
+            },
+            render: function() {
+                return (
+                    <div style={style}>{this.props.name}：{this.state.leftTime}</div>
+                );
+            }
+        });
+        React.render(<Countdown name="距离结束时间还有"></Countdown>, document.body);
+    </script>
+</body>
+</html>
